@@ -97,7 +97,9 @@ variable "pip_sku" {
 variable "tags" {
   description = "Tag for resources"
   type = map(any)
-  default = {}
+  default = {
+    environment = "dev"
+  }
 }
 
 variable "zones" {
