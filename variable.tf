@@ -94,7 +94,7 @@ variable "pip_sku" {
   default     = "Basic"
 }
 
-variable "tag" {
+variable "tags" {
   description = "Tag for resources"
   type = map(any)
   default = {}
