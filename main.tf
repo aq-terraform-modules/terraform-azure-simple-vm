@@ -1,19 +1,7 @@
-
-resource "azurerm_resource_group" "vm_rg" {
-  name = var.resource_group_name
-  location = var.location
-
-  tags = var.tags
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
-}
-
 resource "azurerm_public_ip" "pip" {
   count = var.is_public ? 1 : 0
   name = "${var.vm_name}-publicip"
-  resource_group_name = azurerm_resource_group.vm_rg.name
+  resource_group_name = var.resource_group_name
   location = var.location
   allocation_method = var.pip_allocation_method
   sku = var.pip_sku
@@ -27,7 +15,7 @@ resource "azurerm_public_ip" "pip" {
 
 resource "azurerm_network_interface" "nic" {
   name = "${var.vm_name}-nic"
-  resource_group_name = azurerm_resource_group.vm_rg.name
+  resource_group_name = var.resource_group_name
   location = var.location
   internal_dns_name_label = "${var.vm_name}"
   enable_accelerated_networking = var.enable_accelerated_networking
@@ -48,7 +36,7 @@ resource "azurerm_network_interface" "nic" {
 
 resource "azurerm_virtual_machine" "vm" {
   name = "${var.vm_name}"
-  resource_group_name = azurerm_resource_group.vm_rg.name
+  resource_group_name = var.resource_group_name
   location = var.location
   network_interface_ids = [azurerm_network_interface.nic.id]
   vm_size = var.vm_size
