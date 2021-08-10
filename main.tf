@@ -5,9 +5,9 @@ resource "azurerm_resource_group" "vm_rg" {
 
   tags = var.tags
 
-  lifecycle {
-    ignore_changes = [tags]
-  }
+  # lifecycle {
+  #   ignore_changes = [tags]
+  # }
 }
 
 resource "azurerm_public_ip" "pip" {
