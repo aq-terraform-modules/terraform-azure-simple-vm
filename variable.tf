@@ -32,7 +32,7 @@ variable "vm_size" {
 
 variable "os_image_id" {
   description = "ID of the custom OS image"
-  default = ""
+  default     = ""
 }
 
 variable "os_image_publisher" {
@@ -66,12 +66,12 @@ variable "admin_username" {
 
 variable "admin_password" {
   description = "Admin password of the Windows VM"
-  default = ""
+  default     = ""
 }
 
 variable "ssh_public_key" {
   description = "Public key for SSH"
-  default = ""
+  default     = ""
 }
 
 variable "os_type" {
@@ -80,13 +80,13 @@ variable "os_type" {
 
 variable "is_public" {
   description = "Define if the VM is public or not"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 variable "pip_allocation_method" {
   description = "Allocation method for public ip"
-  default = "Static"
+  default     = "Static"
 }
 
 variable "pip_sku" {
@@ -96,12 +96,12 @@ variable "pip_sku" {
 
 variable "tags" {
   description = "Tag for resources"
-  type = map(any)
-  default = {}
+  type        = map(any)
+  default     = {}
 }
 
 variable "zones" {
   description = "Availability Zones for the VM"
-  type = list(any)
-  default = []
+  type        = list(any)
+  default     = []
 }
