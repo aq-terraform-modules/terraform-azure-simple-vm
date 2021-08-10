@@ -3,6 +3,8 @@ resource "azurerm_resource_group" "vm_rg" {
   name = var.resource_group_name
   location = var.location
 
+  tags = var.tags
+
   lifecycle {
     ignore_changes = [tags]
   }
@@ -15,6 +17,8 @@ resource "azurerm_public_ip" "pip" {
   location = var.location
   allocation_method = var.pip_allocation_method
   sku = var.pip_sku
+
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [tags]
@@ -34,6 +38,8 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = var.private_ip_address_allocation
     public_ip_address_id = var.is_public ? azurerm_public_ip.pip[0].id : null
   }
+
+  tags = var.tags
 
   lifecycle {
     ignore_changes = [tags]
@@ -88,6 +94,10 @@ resource "azurerm_virtual_machine" "vm" {
     }
   }
 
+  zones = var.zones
+
+  tags = var.tags
+
   lifecycle {
     ignore_changes = [tags,storage_image_reference]
   }
@@ -100,4 +110,10 @@ data "azurerm_public_ip" "pip" {
   name = azurerm_public_ip.pip[count.index].name
   resource_group_name = var.resource_group_name
   depends_on = [azurerm_virtual_machine.vm]
+
+  tags = var.tags
+
+  lifecycle {
+    ignore_changes = [tags,storage_image_reference]
+  }
 }

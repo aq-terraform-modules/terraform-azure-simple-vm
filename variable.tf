@@ -93,3 +93,15 @@ variable "pip_sku" {
   description = "Defines the SKU of the Public IP. Accepted values are Basic and Standard. Defaults to Basic."
   default     = "Basic"
 }
+
+variable "tag" {
+  description = "Tag for resources"
+  type = map(any)
+  default = {}
+}
+
+variable "zones" {
+  description = "Availability Zones for the VM"
+  type = list(any)
+  default = []
+}
