@@ -1,6 +1,6 @@
 resource "azurerm_public_ip" "pip" {
-  count               = var.is_public ? 1 : 0
-  name                = "${var.vm_name}-publicip"
+  count               = var.is_public ? var.vm_count : 0
+  name                = var.vm_count == 1 ? "${var.vm_name}-publicip" : "${var.vm_name}-${count.index+1}-publicip"
   resource_group_name = var.resource_group_name
   location            = var.location
   allocation_method   = var.pip_allocation_method
@@ -14,17 +14,18 @@ resource "azurerm_public_ip" "pip" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                          = "${var.vm_name}-nic"
+  count                         = var.vm_count
+  name                          = var.vm_count == 1 ? "${var.vm_name}-nic" : "${var.vm_name}-${count.index+1}-nic"
   resource_group_name           = var.resource_group_name
   location                      = var.location
   internal_dns_name_label       = var.vm_name
   enable_accelerated_networking = var.enable_accelerated_networking
 
   ip_configuration {
-    name                          = "${var.vm_name}-ipconf"
+    name                          = var.vm_count == 1 ? "${var.vm_name}-ipconf" : "${var.vm_name}-${count.index+1}-ipconf"
     subnet_id                     = var.subnet_id
     private_ip_address_allocation = var.private_ip_address_allocation
-    public_ip_address_id          = var.is_public ? azurerm_public_ip.pip[0].id : null
+    public_ip_address_id          = var.is_public ? azurerm_public_ip.pip[count.index].id : null
   }
 
   tags = var.tags
@@ -35,10 +36,11 @@ resource "azurerm_network_interface" "nic" {
 }
 
 resource "azurerm_virtual_machine" "vm" {
-  name                             = var.vm_name
+  count                            = var.vm_count
+  name                             = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
   resource_group_name              = var.resource_group_name
   location                         = var.location
-  network_interface_ids            = [azurerm_network_interface.nic.id]
+  network_interface_ids            = [azurerm_network_interface.nic[count.index].id]
   vm_size                          = var.vm_size
   delete_os_disk_on_termination    = true
   delete_data_disks_on_termination = true
@@ -52,14 +54,14 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
-    name              = "${var.vm_name}-osdisk"
+    name              = var.vm_count == 1 ? "${var.vm_name}-osdisk" : "${var.vm_name}-${count.index+1}-osdisk"
     create_option     = "FromImage"
     caching           = "ReadWrite"
     managed_disk_type = var.os_disk_type
   }
 
   os_profile {
-    computer_name  = var.vm_name
+    computer_name  = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
     admin_username = var.admin_username
     admin_password = var.os_type == "windows" ? var.admin_password : null
   }

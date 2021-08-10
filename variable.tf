@@ -105,3 +105,8 @@ variable "zones" {
   type        = list(any)
   default     = []
 }
+
+variable "vm_count" {
+  description = "Total VMs need to be created"
+  default     = 1
+}
