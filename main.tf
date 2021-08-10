@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "vm_rg" {
 resource "azurerm_public_ip" "pip" {
   count = var.is_public ? 1 : 0
   name = "${var.vm_name}-publicip"
-  resource_group_name = var.resource_group_name
+  resource_group_name = azurerm_resource_group.vm_rg
   location = var.location
   allocation_method = var.pip_allocation_method
   sku = var.pip_sku
