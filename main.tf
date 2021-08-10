@@ -110,10 +110,4 @@ data "azurerm_public_ip" "pip" {
   name = azurerm_public_ip.pip[count.index].name
   resource_group_name = var.resource_group_name
   depends_on = [azurerm_virtual_machine.vm]
-
-  tags = var.tags
-
-  lifecycle {
-    ignore_changes = [tags,storage_image_reference]
-  }
 }
