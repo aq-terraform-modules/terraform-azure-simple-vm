@@ -30,6 +30,11 @@ variable "vm_size" {
   default     = "Standard_B2s"
 }
 
+variable "os_image_id" {
+  description = "ID of the custom OS image"
+  default = ""
+}
+
 variable "os_image_publisher" {
   description = "Publisher of the OS image"
   default     = ""
@@ -47,7 +52,7 @@ variable "os_image_sku" {
 
 variable "os_image_version" {
   description = "Version of the OS image"
-  default     = ""
+  default     = "latest"
 }
 
 variable "os_disk_type" {

@@ -71,7 +71,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   dynamic os_profile_linux_config {
-    for_each = var.os_type == "linux" ? [var.os_profile] : []
+    for_each = var.os_type == "linux" ? [var.os_type] : []
     content {
       disable_password_authentication = true
       ssh_keys {
@@ -82,7 +82,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   dynamic os_profile_windows_config {
-    for_each = var.os_type == "windows" ? [var.os_profile] : []
+    for_each = var.os_type == "windows" ? [var.os_type] : []
     content {
       provision_vm_agent = true
     }
