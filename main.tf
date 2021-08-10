@@ -18,7 +18,7 @@ resource "azurerm_network_interface" "nic" {
   name                          = var.vm_count == 1 ? "${var.vm_name}-nic" : "${var.vm_name}-${count.index+1}-nic"
   resource_group_name           = var.resource_group_name
   location                      = var.location
-  internal_dns_name_label       = var.vm_name
+  internal_dns_name_label       = var.vm_count == 1 ? "${var.vm_name}-nic" : "${var.vm_name}-${count.index+1}-nic"
   enable_accelerated_networking = var.enable_accelerated_networking
 
   ip_configuration {
