@@ -104,7 +104,7 @@ data "azurerm_public_ip" "pip" {
 }
 
 resource "azurerm_virtual_machine_extension" "winrm_setup" {
-  count                      = var.vm_count
+  count                      = var.os_type == "windows" ? var.vm_count : 0
   name                       = "winrm_setup"
   virtual_machine_id         = azurerm_virtual_machine.vm[count.index].id
   publisher                  = "Microsoft.Compute"
