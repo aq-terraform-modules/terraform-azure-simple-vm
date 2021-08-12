@@ -64,6 +64,7 @@ resource "azurerm_virtual_machine" "vm" {
     computer_name  = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
     admin_username = var.admin_username
     admin_password = var.os_type == "windows" ? var.admin_password : null
+    custom_data    = var.os_type == "windows" ? filebase64("${path.module}/files/ansiblewinrm.ps1") : null
   }
 
   dynamic "os_profile_linux_config" {
@@ -100,4 +101,25 @@ data "azurerm_public_ip" "pip" {
   name                = azurerm_public_ip.pip[count.index].name
   resource_group_name = var.resource_group_name
   depends_on          = [azurerm_virtual_machine.vm]
+}
+
+resource "azurerm_virtual_machine_extension" "winrm_setup" {
+  count                      = var.vm_count
+  name                       = "winrm_setup"
+  virtual_machine_id         = azurerm_virtual_machine.vm[count.index].id
+  publisher                  = "Microsoft.Compute"
+  type                       = "CustomScriptExtension"
+  type_handler_version       = "1.10"
+  auto_upgrade_minor_version = true
+
+  tags = var.tags
+
+  protected_settings = <<PROTECTEDSETTINGS
+    {
+      "commandToExecute": "powershell -ExecutionPolicy unrestricted -NoProfile -NonInteractive -command \"Copy-Item -Path C:/AzureData/CustomData.bin -Destination C:/AzureData/ansiblewinrm.ps1; C:/AzureData/ansiblewinrm.ps1 -Verbose -ForceNewSSLCert; Remove-Item C:/AzureData/* -Recurse -Force\""
+    }
+  PROTECTEDSETTINGS
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
