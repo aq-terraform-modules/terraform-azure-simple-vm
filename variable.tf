@@ -94,12 +94,6 @@ variable "pip_sku" {
   default     = "Basic"
 }
 
-variable "tags" {
-  description = "Tag for resources"
-  type        = map(any)
-  default     = {}
-}
-
 variable "zones" {
   description = "Availability Zones for the VM"
   type        = list(any)
@@ -109,4 +103,8 @@ variable "zones" {
 variable "vm_count" {
   description = "Total VMs need to be created"
   default     = 1
+}
+
+variable "tag_applicationRole" {
+  description = "Value for tag applicationRole"
 }

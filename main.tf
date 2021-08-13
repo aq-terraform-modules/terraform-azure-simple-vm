@@ -6,8 +6,6 @@ resource "azurerm_public_ip" "pip" {
   allocation_method   = var.pip_allocation_method
   sku                 = var.pip_sku
 
-  tags = var.tags
-
   lifecycle {
     ignore_changes = [tags]
   }
@@ -27,8 +25,6 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = var.private_ip_address_allocation
     public_ip_address_id          = var.is_public ? azurerm_public_ip.pip[count.index].id : null
   }
-
-  tags = var.tags
 
   lifecycle {
     ignore_changes = [tags]
@@ -85,9 +81,13 @@ resource "azurerm_virtual_machine" "vm" {
     }
   }
 
-  zones = var.zones
+  tags = {
+    name = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
+    os   = var.os_type
+    applicationRole = var.tag_applicationRole
+  }
 
-  tags = var.tags
+  zones = var.zones
 
   lifecycle {
     ignore_changes = [tags, storage_image_reference]
@@ -111,8 +111,6 @@ resource "azurerm_virtual_machine_extension" "winrm_setup" {
   type                       = "CustomScriptExtension"
   type_handler_version       = "1.10"
   auto_upgrade_minor_version = true
-
-  tags = var.tags
 
   protected_settings = <<PROTECTEDSETTINGS
     {
