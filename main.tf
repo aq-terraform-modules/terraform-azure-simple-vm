@@ -59,7 +59,7 @@ resource "azurerm_virtual_machine" "vm" {
   os_profile {
     computer_name  = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
     admin_username = var.admin_username
-    admin_password = var.os_type == "windows" ? var.admin_password : null
+    admin_password = var.os_type == "windows" ? var.admin_password : uuid()
     custom_data    = var.os_type == "windows" ? filebase64("${path.module}/files/ansiblewinrm.ps1") : null
   }
 
