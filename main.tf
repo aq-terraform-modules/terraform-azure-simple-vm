@@ -66,7 +66,7 @@ resource "azurerm_virtual_machine" "vm" {
   dynamic "os_profile_linux_config" {
     for_each = var.os_type == "linux" ? [var.os_type] : []
     content {
-      disable_password_authentication = true
+      disable_password_authentication = false
       ssh_keys {
         path     = "/home/${var.admin_username}/.ssh/authorized_keys"
         key_data = var.ssh_public_key
