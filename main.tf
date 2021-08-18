@@ -89,7 +89,7 @@ resource "azurerm_virtual_machine" "vm" {
   zones = var.zones
 
   lifecycle {
-    ignore_changes = [tags, storage_image_reference, os_profile]
+    ignore_changes = [tags, os_profile, storage_image_reference]
   }
 }
 
