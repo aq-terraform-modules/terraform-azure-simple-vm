@@ -8,7 +8,7 @@ resource "azurerm_resource_group" "rg" {
   }
 
   tags = {
-    name = var.resource_group_name
+    name            = var.resource_group_name
     applicationRole = var.tag_applicationRole
   }
 }
@@ -129,16 +129,18 @@ data "azurerm_public_ip" "pip" {
 }
 
 data "azurerm_dns_zone" "public_dns_zone" {
+  count               = var.public_dns_zone_name != "" ? 1 : 0
   name                = var.public_dns_zone_name
   resource_group_name = var.service_rg_name
 }
 
 resource "azurerm_dns_a_record" "public_dns_zone_record" {
-  name                = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
-  zone_name           = data.azurerm_dns_zone.public_dns_zone.name
+  count               = length(data.azurerm_dns_zone.public_dns_zone) > 0 ? length(data.azurerm_public_ip.pip) : 0
+  name                = length(data.azurerm_public_ip.pip) == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
+  zone_name           = data.azurerm_dns_zone.public_dns_zone[0].name
   resource_group_name = var.service_rg_name
   ttl                 = 600
-  records             = [data.azurerm_public_ip.pip.ip_address]
+  records             = [data.azurerm_public_ip.pip[count.index].ip_address]
 }
 
 resource "azurerm_virtual_machine_extension" "winrm_setup" {

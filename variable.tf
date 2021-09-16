@@ -4,6 +4,7 @@ variable "service_rg_name" {
 
 variable "public_dns_zone_name" {
   description = "Public DNS Zone name"
+  default     = ""
 }
 
 variable "create_rg" {
