@@ -1,5 +1,6 @@
 variable "service_rg_name" {
   description = "Service RG name"
+  default     = ""
 }
 
 variable "public_dns_zone_name" {
