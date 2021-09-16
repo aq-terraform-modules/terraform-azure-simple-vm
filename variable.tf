@@ -1,3 +1,9 @@
+variable "create_rg" {
+  description = "Create RG or not"
+  type        = bool
+  default     = true
+}
+
 variable "vm_name" {
   description = "Name of the VM"
 }

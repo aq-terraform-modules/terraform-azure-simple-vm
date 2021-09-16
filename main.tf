@@ -1,7 +1,22 @@
+resource "azurerm_resource_group" "rg" {
+  count    = var.create_rg ? 1 : 0
+  name     = var.resource_group_name
+  location = local.location
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
+  tags = {
+    name = var.resource_group_name
+    applicationRole = var.tag_applicationRole
+  }
+}
+
 resource "azurerm_public_ip" "pip" {
   count               = var.is_public ? var.vm_count : 0
   name                = var.vm_count == 1 ? "${var.vm_name}-publicip" : "${var.vm_name}-${count.index+1}-publicip"
-  resource_group_name = var.resource_group_name
+  resource_group_name = var.create_rg ? azurerm_resource_group.rg.name : var.resource_group_name
   location            = var.location
   allocation_method   = var.pip_allocation_method
   sku                 = var.pip_sku
@@ -9,12 +24,17 @@ resource "azurerm_public_ip" "pip" {
   lifecycle {
     ignore_changes = [tags]
   }
+
+  tags = {
+    name = var.vm_count == 1 ? "${var.vm_name}-publicip" : "${var.vm_name}-${count.index+1}-publicip"
+    applicationRole = var.tag_applicationRole
+  }
 }
 
 resource "azurerm_network_interface" "nic" {
   count                         = var.vm_count
   name                          = var.vm_count == 1 ? "${var.vm_name}-nic" : "${var.vm_name}-${count.index+1}-nic"
-  resource_group_name           = var.resource_group_name
+  resource_group_name           = var.create_rg ? azurerm_resource_group.rg.name : var.resource_group_name
   location                      = var.location
   internal_dns_name_label       = var.vm_count == 1 ? "${var.vm_name}-nic" : "${var.vm_name}-${count.index+1}-nic"
   enable_accelerated_networking = var.enable_accelerated_networking
@@ -29,12 +49,17 @@ resource "azurerm_network_interface" "nic" {
   lifecycle {
     ignore_changes = [tags]
   }
+
+  tags = {
+    name = var.vm_count == 1 ? "${var.vm_name}-nic" : "${var.vm_name}-${count.index+1}-nic"
+    applicationRole = var.tag_applicationRole
+  }
 }
 
 resource "azurerm_virtual_machine" "vm" {
   count                            = var.vm_count
   name                             = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
-  resource_group_name              = var.resource_group_name
+  resource_group_name              = var.create_rg ? azurerm_resource_group.rg.name : var.resource_group_name
   location                         = var.location
   network_interface_ids            = [azurerm_network_interface.nic[count.index].id]
   vm_size                          = var.vm_size
