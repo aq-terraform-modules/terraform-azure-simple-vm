@@ -1,3 +1,11 @@
+variable "service_rg_name" {
+  description = "Service RG name"
+}
+
+variable "public_dns_zone_name" {
+  description = "Public DNS Zone name"
+}
+
 variable "create_rg" {
   description = "Create RG or not"
   type        = bool

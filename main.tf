@@ -128,6 +128,19 @@ data "azurerm_public_ip" "pip" {
   depends_on          = [azurerm_virtual_machine.vm]
 }
 
+data "azurerm_dns_zone" "public_dns_zone" {
+  name                = var.public_dns_zone_name
+  resource_group_name = var.service_rg_name
+}
+
+resource "azurerm_dns_a_record" "public_dns_zone_record" {
+  name                = var.vm_count == 1 ? var.vm_name : "${var.vm_name}-${count.index+1}"
+  zone_name           = data.azurerm_dns_zone.public_dns_zone.name
+  resource_group_name = var.service_rg_name
+  ttl                 = 600
+  records             = [data.azurerm_public_ip.pip.ip_address]
+}
+
 resource "azurerm_virtual_machine_extension" "winrm_setup" {
   count                      = var.os_type == "windows" ? var.vm_count : 0
   name                       = "winrm_setup"
